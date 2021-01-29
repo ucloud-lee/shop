@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-exporter
+  labels:
+    name: node-exporter
+    k8s-app: node-exporter
+spec:
+  selector:
+    matchLabels:
+      name: shop
+  template:
+    metadata:
+      labels:
+        name: node-exporter
+        app: node-exporter
+    spec:
+      hostPID: true
+      hostIPC: true
+      hostNetwork: true
+      containers:
+      - name: node-exporter
+        image: prom/node-exporter:v0.18.1
+        ports:
+        - containerPort: 9100
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: shop
+          mountPath: /root/shop
+      tolerations:
+      - key: "node-role.kubernetes.io/master"
+        operator: "Exists"
+        effect: "NoSchedule"
+      volumes:
+        - name: proc
+          hostPath:
+            path: /proc
+        - name: dev
+          hostPath:
+            path: /dev
+        - name: sys
+          hostPath:
+            path: /sys
+        - name: rootfs
+          hostPath:
+            path: /

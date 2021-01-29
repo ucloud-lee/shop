@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shop
+  labels:
+    app: shop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shop
+  template:
+    metadata:
+      labels:
+        app: shop
+    spec:
+      nodeName: 10-23-239-33
+      containers:
+      - name: shop
+        image: shop:v0.6
+        ports:
+        - containerPort: 8000
+          hostPort: 80
+        volumeMounts:
+        - mountPath: /app/html
+          name: shop
+      volumes:
+      - name: shop
+        hostPath:
+          path: /root/shop/html
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shop
+spec:
+  ports:
+  - port: 80
+    targetPort: 8000
+  selector:
+    app: shop
+  type: ClusterIP
