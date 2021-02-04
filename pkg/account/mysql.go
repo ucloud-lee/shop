@@ -11,7 +11,7 @@ import (
 
 const (
 	username = "root"
-	passward = "123456"
+	passward = "mysql"
 	network  = "tcp"
 	host     = "113.31.106.132"
 	port     = 3306

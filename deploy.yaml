@@ -17,7 +17,7 @@ spec:
       nodeName: 10-23-239-33
       containers:
       - name: shop
-        image: shop:v0.6
+        image: shop:v0.7
         ports:
         - containerPort: 8000
           hostPort: 80
@@ -27,7 +27,7 @@ spec:
       volumes:
       - name: shop
         hostPath:
-          path: /root/shop/html
+          path: /opt/projects/shop/html
 
 ---
 apiVersion: v1

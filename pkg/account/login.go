@@ -2,7 +2,10 @@ package account
 
 import (
 	"database/sql"
+	"io"
+	"io/ioutil"
 	"net/http"
+	"os"
 	"text/template"
 
 	log "github.com/gogap/logrus"
@@ -59,8 +62,29 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 }
 func goAdmin(w http.ResponseWriter) {
-	t := template.Must(template.ParseFiles("html/login/admin.html"))
+	curlAddress("http://113.31.106.132:4000/docs/address.html", "html/login/test.html")
+	t := template.Must(template.ParseFiles("html/login/test.html"))
 	t.Execute(w, nil)
+}
+func curlAddress(url string, filePath string) {
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Error("http.Get err=", err)
+		return
+	}
+
+	bytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Error("ioutil.ReadAll err=", err)
+		return
+	}
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644) //打开文件
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	io.WriteString(f, string(bytes))
+	f.Close()
 }
 func login(db *sql.DB, login int, name string) { //UPDATE table_name SET field1=new-value1, field2=new-value2 [WHERE Clause]
 	stmt, err := db.Prepare("UPDATE admin SET login=? where  name=?;")
@@ -75,3 +99,4 @@ func login(db *sql.DB, login int, name string) { //UPDATE table_name SET field1=
 		return
 	}
 }
+
